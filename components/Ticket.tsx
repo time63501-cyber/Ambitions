@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import type { Ambition } from '../types';
+import { GOOGLE_SHEET_APP_SCRIPT_URL } from '../constants';
 
 declare const htmlToImage: any;
 
@@ -84,7 +85,7 @@ const Logo: React.FC<{ className?: string }> = ({ className }) => (
 
 const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
   const ticketRef = useRef<HTMLDivElement>(null);
-  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitting' | 'success' | 'error' | 'unconfigured'>('idle');
 
   const handleDownload = () => {
     if (ticketRef.current === null) {
@@ -107,33 +108,32 @@ const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
   };
 
   const handleAddToArchive = async () => {
+    if (!GOOGLE_SHEET_APP_SCRIPT_URL || GOOGLE_SHEET_APP_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+      setSubmissionStatus('unconfigured');
+      return;
+    }
+
     setSubmissionStatus('submitting');
 
-    const submissionData = { ...ambition };
-    // @ts-ignore
-    delete submissionData.id;
-    // @ts-ignore
-    delete submissionData.createdAt;
+    const submissionData = { 
+      ...ambition,
+      status: 'pending'
+    };
 
     try {
-      // In a real application, this would be a real API endpoint.
-      // const response = await fetch('/api/ambitions', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(submissionData),
-      // });
+      const response = await fetch(GOOGLE_SHEET_APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        body: JSON.stringify(submissionData),
+      });
 
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok');
-      // }
-      
-      // For demonstration purposes, we'll simulate a network delay and then a success.
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // To demonstrate the error state, uncomment the line below:
-      // throw new Error("This is a simulated error.");
-      
-      setSubmissionStatus('success');
+      const result = await response.json();
 
+      if (result.result === 'success') {
+        setSubmissionStatus('success');
+      } else {
+        throw new Error(result.error || 'The script returned an unsuccessful status.');
+      }
     } catch (error) {
       console.error("Submission failed:", error);
       setSubmissionStatus('error');
@@ -243,12 +243,28 @@ const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
             </div>
           )}
 
+          {submissionStatus === 'unconfigured' && (
+            <div className="flex flex-col items-center justify-center text-amber-400">
+                <ExclamationTriangleIcon className="w-12 h-12"/>
+                <h3 className="font-bold text-white text-lg mt-2">Configuration Needed</h3>
+                <p className="text-slate-300 text-sm mt-1">
+                    This feature is not yet configured. The Google Apps Script URL is missing.
+                </p>
+                 <button
+                    onClick={() => setSubmissionStatus('idle')}
+                    className="mt-4 text-sm font-semibold text-slate-300 hover:text-white underline"
+                >
+                    Try Again
+                </button>
+            </div>
+          )}
+
           {submissionStatus === 'error' && (
              <div className="flex flex-col items-center justify-center text-amber-400">
                 <ExclamationTriangleIcon className="w-12 h-12"/>
                 <h3 className="font-bold text-white text-lg mt-2">Submission Failed</h3>
                 <p className="text-slate-300 text-sm mt-1">
-                    Could not connect to the archive. This is a demo; a backend is required for this feature to work.
+                    Could not connect to the archive. Please try again later.
                 </p>
                  <button
                     onClick={() => setSubmissionStatus('idle')}

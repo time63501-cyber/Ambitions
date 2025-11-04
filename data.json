@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "name": "Elena Rodriguez",
+    "age": 12,
+    "ambition": "Astrophysicist",
+    "imageUrl": "https://picsum.photos/id/1011/800/600",
+    "createdAt": 1722081600000,
+    "story": "I want to discover new galaxies and understand the secrets of black holes. The night sky feels like a giant puzzle waiting to be solved.",
+    "instagram": "elena_codes_stars",
+    "targetYear": 2035
+  },
+  {
+    "id": 2,
+    "name": "Marcus Chen",
+    "age": 8,
+    "ambition": "Marine Biologist",
+    "imageUrl": "https://picsum.photos/id/1027/800/600",
+    "createdAt": 1722168000000,
+    "story": "The ocean is full of amazing creatures. I want to swim with dolphins and help protect the coral reefs from pollution.",
+    "targetYear": 2040
+  },
+  {
+    "id": 3,
+    "name": "Aisha Jamil",
+    "age": 15,
+    "ambition": "Documentary Filmmaker",
+    "imageUrl": "https://picsum.photos/id/10/800/600",
+    "createdAt": 1722254400000,
+    "story": "There are so many important stories in the world that need to be told. I want to use my camera to give a voice to the voiceless and inspire change.",
+    "targetYear": 2030
+  },
+  {
+    "id": 4,
+    "name": "Leo Santos",
+    "age": 10,
+    "ambition": "Robotics Engineer",
+    "imageUrl": "https://picsum.photos/id/1/800/600",
+    "createdAt": 1722340800000,
+    "story": "I love building things, and I want to build real robots that can help people, like exploring other planets or assisting doctors in surgery.",
+    "targetYear": 2038
+  }
+]

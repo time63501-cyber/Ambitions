@@ -1,40 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Header from './components/Header';
-import AmbitionGallery from './components/AmbitionGallery';
-import AmbitionForm from './components/AmbitionForm';
 import Footer from './components/Footer';
-import AmbitionDetail from './components/AmbitionDetail';
-import AmbitionsList from './components/AmbitionsList';
-import About from './components/About'; // Import the new component
-import { INITIAL_AMBITIONS } from './constants';
 import type { Ambition } from './types';
+import { storyTemplates } from './storyTemplates';
+
+// Lazy load components that are not needed for the initial render or are view-dependent.
+const AmbitionGallery = lazy(() => import('./components/AmbitionGallery'));
+const AmbitionForm = lazy(() => import('./components/AmbitionForm'));
+const AmbitionDetail = lazy(() => import('./components/AmbitionDetail'));
+const AmbitionsList = lazy(() => import('./components/AmbitionsList'));
+const About = lazy(() => import('./components/About'));
+const Ticket = lazy(() => import('./components/Ticket'));
 
 type View = 'gallery' | 'list' | 'detail' | 'about';
 
+const LoadingSpinner: React.FC = () => (
+  <div className="flex justify-center items-center py-40">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-rose-500"></div>
+  </div>
+);
+
 const App: React.FC = () => {
-  const [ambitions, setAmbitions] = useState<Ambition[]>(() => {
-    try {
-      const storedAmbitions = window.localStorage.getItem('ambitions');
-      return storedAmbitions ? JSON.parse(storedAmbitions) : INITIAL_AMBITIONS;
-    } catch (error) {
-      console.error("Failed to parse ambitions from localStorage", error);
-      return INITIAL_AMBITIONS;
-    }
-  });
+  const [ambitions, setAmbitions] = useState<Ambition[]>([]);
+  const [ticketData, setTicketData] = useState<Ambition | null>(null);
   
   const [view, setView] = useState<View>('gallery');
   const [detailId, setDetailId] = useState<number | null>(null);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem('ambitions', JSON.stringify(ambitions));
-    } catch (error) {
-      console.error("Failed to save ambitions to localStorage", error);
+    const loadAmbitions = async () => {
+      try {
+        const storedAmbitions = window.localStorage.getItem('ambitions');
+        if (storedAmbitions && storedAmbitions !== '[]') {
+          setAmbitions(JSON.parse(storedAmbitions));
+        } else {
+          const response = await fetch('/data.json');
+           if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const initialAmbitions = await response.json();
+          setAmbitions(initialAmbitions);
+        }
+      } catch (error) {
+        console.error("Failed to load ambitions:", error);
+        setAmbitions([]); // Fallback to empty array on error
+      }
+    };
+    loadAmbitions();
+  }, []);
+
+  useEffect(() => {
+    if (ambitions.length > 0) {
+      try {
+        window.localStorage.setItem('ambitions', JSON.stringify(ambitions));
+      } catch (error) {
+        console.error("Failed to save ambitions to localStorage", error);
+      }
     }
   }, [ambitions]);
 
 
   useEffect(() => {
+    if (ambitions.length === 0) return;
+
     const setMetaTag = (attr: 'name' | 'property', value: string, content: string) => {
       let element = document.querySelector(`meta[${attr}="${value}"]`);
       if (!element) {
@@ -121,31 +149,35 @@ const App: React.FC = () => {
       setMetaTag('property', 'twitter:description', defaultDescription);
       setMetaTag('property', 'twitter:image', defaultImage);
     }
-  }, [ambitions]);
+  }, [ambitions, view]);
 
-  const handleAddAmbition = (newAmbitionData: Omit<Ambition, 'id' | 'imageUrl' | 'createdAt'>) => {
+  const handleAddAmbition = (newAmbitionData: Omit<Ambition, 'id' | 'createdAt'>) => {
+    let story = newAmbitionData.story;
+
+    // If no story is provided, pick a template
+    if (!story || story.trim() === '') {
+        const template = storyTemplates[Math.floor(Math.random() * storyTemplates.length)];
+        story = template
+            .replace(/{{name}}/g, newAmbitionData.name)
+            .replace(/{{age}}/g, String(newAmbitionData.age))
+            .replace(/{{ambition}}/g, newAmbitionData.ambition);
+    }
+      
     const newAmbition: Ambition = {
       ...newAmbitionData,
+      story, // Use the (potentially generated) story
       id: Date.now(),
-      imageUrl: `https://picsum.photos/seed/${Date.now()}/800/600`,
+      imageUrl: newAmbitionData.imageUrl || `https://picsum.photos/seed/${Date.now()}/800/600`,
       createdAt: Date.now(),
     };
     
     const updatedAmbitions = [...ambitions, newAmbition];
     setAmbitions(updatedAmbitions);
-
-    // Create and download the JSON file
-    const jsonData = JSON.stringify(updatedAmbitions, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ambitions_data.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTicketData(newAmbition); // Set the new ambition data to show the ticket
+  };
+  
+  const handleCloseTicket = () => {
+    setTicketData(null);
   };
 
   const renderContent = () => {
@@ -172,11 +204,16 @@ const App: React.FC = () => {
     <div className="bg-stone-50 min-h-screen text-slate-800 antialiased">
       <Header />
       <main>
-        <div className="animate-fade-in">
-          {renderContent()}
-        </div>
+        <Suspense fallback={<LoadingSpinner />}>
+          <div className="animate-fade-in">
+            {renderContent()}
+          </div>
+        </Suspense>
       </main>
       <Footer />
+      <Suspense fallback={null}>
+        {ticketData && <Ticket ambition={ticketData} onClose={handleCloseTicket} />}
+      </Suspense>
     </div>
   );
 };

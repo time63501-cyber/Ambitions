@@ -5,4 +5,7 @@ export interface Ambition {
   ambition: string;
   imageUrl: string;
   createdAt: number;
+  story?: string;
+  instagram?: string;
+  targetYear: number;
 }

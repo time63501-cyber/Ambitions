@@ -3,10 +3,10 @@ import React from 'react';
 const Header: React.FC = () => {
   return (
     <header className="py-8 md:py-12">
-      <div className="container mx-auto px-4">
-        <a href="/" aria-label="Back to homepage">
-          <h1 className="text-4xl md:text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-500 tracking-tight hover:opacity-80 transition-opacity">
-            Ambitious
+      <div className="container mx-auto px-4 text-center">
+        <a href="/" aria-label="Back to homepage" className="inline-block">
+          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-500 tracking-tight hover:opacity-80 transition-opacity">
+            Ambitions
           </h1>
         </a>
         <p className="text-center text-slate-500 mt-2 text-lg">

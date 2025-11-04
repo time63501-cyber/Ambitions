@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import type { Ambition } from '../types';
 
 declare const htmlToImage: any;
@@ -19,6 +19,19 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
   </svg>
 );
+
+const CheckCircleIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+);
+
+const ExclamationTriangleIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+    </svg>
+);
+
 
 const Logo: React.FC<{ className?: string }> = ({ className }) => (
   <svg
@@ -71,6 +84,7 @@ const Logo: React.FC<{ className?: string }> = ({ className }) => (
 
 const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
   const ticketRef = useRef<HTMLDivElement>(null);
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const handleDownload = () => {
     if (ticketRef.current === null) {
@@ -83,7 +97,7 @@ const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
     })
       .then((dataUrl: string) => {
         const link = document.createElement('a');
-        link.download = `ambition-ticket-${ambition.name.toLowerCase().replace(/\s/g, '-')}.png`;
+        link.download = `ambitions-ticket-${ambition.name.toLowerCase().replace(/\s/g, '-')}.png`;
         link.href = dataUrl;
         link.click();
       })
@@ -91,6 +105,41 @@ const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
         console.error('Oops, something went wrong!', err);
       });
   };
+
+  const handleAddToArchive = async () => {
+    setSubmissionStatus('submitting');
+
+    const submissionData = { ...ambition };
+    // @ts-ignore
+    delete submissionData.id;
+    // @ts-ignore
+    delete submissionData.createdAt;
+
+    try {
+      // In a real application, this would be a real API endpoint.
+      // const response = await fetch('/api/ambitions', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(submissionData),
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error('Network response was not ok');
+      // }
+      
+      // For demonstration purposes, we'll simulate a network delay and then a success.
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      // To demonstrate the error state, uncomment the line below:
+      // throw new Error("This is a simulated error.");
+      
+      setSubmissionStatus('success');
+
+    } catch (error) {
+      console.error("Submission failed:", error);
+      setSubmissionStatus('error');
+    }
+  };
+
 
   const formattedDate = new Date(ambition.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -107,7 +156,7 @@ const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
           <div className="p-8 text-white w-full">
             <header className="text-center border-b-2 border-dashed border-slate-600 pb-4 mb-6">
               <Logo className="h-12 w-12 mx-auto mb-2" />
-              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-500 tracking-tight">Ambitious</h2>
+              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-500 tracking-tight">Ambitions</h2>
               <p className="text-slate-400 text-sm tracking-widest uppercase">Official Record of Ambition</p>
             </header>
             <div className="space-y-5 text-center">
@@ -159,6 +208,59 @@ const Ticket: React.FC<TicketProps> = ({ ambition, onClose }) => {
             Close
           </button>
         </div>
+
+        {/* Public Submission */}
+        <div className="mt-8 text-center bg-slate-900/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-700">
+          {submissionStatus === 'idle' && (
+            <>
+              <h3 className="font-bold text-white text-lg">Make it Permanent!</h3>
+              <p className="text-slate-300 text-sm mt-2">
+                Add your dream to the permanent public archive for the world to see.
+              </p>
+              <button
+                onClick={handleAddToArchive}
+                className="mt-4 inline-block w-full bg-slate-200 text-slate-800 font-bold py-3 px-4 rounded-lg hover:bg-white transition-colors transform hover:scale-105"
+              >
+                Add to Public Archive
+              </button>
+            </>
+          )}
+
+          {submissionStatus === 'submitting' && (
+            <div className="flex flex-col items-center justify-center text-white">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-400"></div>
+                <p className="mt-4 font-semibold">Submitting to the archive...</p>
+            </div>
+          )}
+
+          {submissionStatus === 'success' && (
+            <div className="flex flex-col items-center justify-center text-green-400">
+                <CheckCircleIcon className="w-12 h-12"/>
+                <h3 className="font-bold text-white text-lg mt-2">Success!</h3>
+                <p className="text-slate-300 text-sm mt-1">
+                    Your ambition has been submitted for review.
+                </p>
+            </div>
+          )}
+
+          {submissionStatus === 'error' && (
+             <div className="flex flex-col items-center justify-center text-amber-400">
+                <ExclamationTriangleIcon className="w-12 h-12"/>
+                <h3 className="font-bold text-white text-lg mt-2">Submission Failed</h3>
+                <p className="text-slate-300 text-sm mt-1">
+                    Could not connect to the archive. This is a demo; a backend is required for this feature to work.
+                </p>
+                 <button
+                    onClick={() => setSubmissionStatus('idle')}
+                    className="mt-4 text-sm font-semibold text-slate-300 hover:text-white underline"
+                >
+                    Try Again
+                </button>
+            </div>
+          )}
+
+        </div>
+
       </div>
     </div>
   );

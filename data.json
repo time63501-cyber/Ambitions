@@ -1,5 +1,16 @@
 [
   {
+    "id": 0,
+    "name": "ambition",
+    "age": 0,
+    "ambition": "famous social media page",
+    "imageUrl": "https://picsum.photos/seed/ambition-page/800/600",
+    "createdAt": 1722081500000,
+    "story": "This page is a dream to connect millions, sharing stories of hope and inspiration. The goal is to build a community where every voice matters.",
+    "instagram": "ambitions_official",
+    "targetYear": 2030
+  },
+  {
     "id": 1,
     "name": "Elena Rodriguez",
     "age": 12,

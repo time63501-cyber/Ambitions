@@ -111,7 +111,7 @@ const AmbitionForm: React.FC<AmbitionFormProps> = ({ onAddAmbition }) => {
               <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Jane Doe" className={requiredInputStyle} required/>
             </div>
             <div>
-              <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-1">Age of Ambition</label>
+              <label htmlFor="age" className="block text-sm font-medium text-slate-700 mb-1">Current Age</label>
               <input type="number" id="age" value={age} onChange={(e) => setAge(e.target.value)} placeholder="e.g., 10" className={requiredInputStyle} required/>
             </div>
           </div>

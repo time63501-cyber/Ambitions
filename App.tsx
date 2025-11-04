@@ -77,7 +77,7 @@ const App: React.FC = () => {
     const ambitionId = params.get('id');
     const viewParam = params.get('view');
 
-    const defaultTitle = 'Ambitious | Share & Discover Inspiring Dreams';
+    const defaultTitle = 'Ambitions | Share & Discover Inspiring Dreams';
     const defaultDescription = 'Explore a gallery of dreams and ambitions from people around the world. Get inspired, share your own goals, and see what others aspire to achieve.';
     const defaultUrl = 'https://ambitions.vercel.app.com';
     const defaultImage = 'https://picsum.photos/seed/ambitious-og/1200/630';
@@ -89,8 +89,8 @@ const App: React.FC = () => {
 
       if (foundAmbition) {
         const { name, age, ambition, imageUrl } = foundAmbition;
-        const title = `${name} - Ambition: ${ambition} | Ambitious`;
-        const description = `Discover the story of ${name}, who at age ${age} dreamt of becoming a pioneering ${ambition}. Explore inspiring ambitions from around the world on Ambitious.`;
+        const title = `${name} - Ambition: ${ambition} | Ambitions`;
+        const description = `Discover the story of ${name}, who at age ${age} dreamt of becoming a pioneering ${ambition}. Explore inspiring ambitions from around the world on Ambitions.`;
         const url = `${defaultUrl}/?id=${foundAmbition.id}`;
 
         document.title = title;
@@ -122,8 +122,8 @@ const App: React.FC = () => {
     } else if (viewParam === 'about') {
       setView('about');
       setDetailId(null);
-      const title = 'About | Ambitious';
-      const description = 'Learn about our mission. Ambitious is a digital record of dreams, a place to archive the goals of kids and people everywhere for inspiration and reflection.';
+      const title = 'About | Ambitions';
+      const description = 'Learn about our mission. Ambitions is a digital record of dreams, a place to archive the goals of kids and people everywhere for inspiration and reflection.';
       const url = `${defaultUrl}/?view=about`;
       
       document.title = title;

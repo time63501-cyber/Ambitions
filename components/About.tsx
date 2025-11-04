@@ -8,7 +8,7 @@ const About: React.FC = () => {
         <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-amber-500 mx-auto my-6 rounded-full"></div>
         <div className="prose prose-lg max-w-none text-slate-600 text-left md:text-center">
           <p>
-            The purpose of <strong>Ambitious</strong> is to create a beautiful digital record of dreams. 
+            The purpose of <strong>Ambitions</strong> is to create a beautiful digital record of dreams. 
             We believe every ambition, big or small, holds a powerful story of hope, creativity, and human potential.
           </p>
           <p>

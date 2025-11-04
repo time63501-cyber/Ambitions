@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO: Title and Meta Description -->
+    <title>Ambitious | Share & Discover Inspiring Dreams</title>
+    <meta name="description" content="Explore a gallery of dreams and ambitions from people around the world. Get inspired, share your own goals, and see what others aspire to achieve." />
+    <meta name="keywords" content="ambition, dreams, goals, inspiration, career, aspirations, motivation" />
+    
+    <!-- SEO: Canonical URL -->
+    <link rel="canonical" href="https://ambitions.vercel.app.com" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ambitions.vercel.app.com" />
+    <meta property="og:title" content="Ambitious | Share & Discover Inspiring Dreams" />
+    <meta property="og:description" content="Explore a gallery of dreams and ambitions from people around the world. Get inspired, share your own goals, and see what others aspire to achieve." />
+    <meta property="og:image" content="https://picsum.photos/seed/ambitious-og/1200/630" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://ambitions.vercel.app.com" />
+    <meta property="twitter:title" content="Ambitious | Share & Discover Inspiring Dreams" />
+    <meta property="twitter:description" content="Explore a gallery of dreams and ambitions from people around the world. Get inspired, share your own goals, and see what others aspire to achieve." />
+    <meta property="twitter:image" content="https://picsum.photos/seed/ambitious-og/1200/630" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0px)' },
+              },
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+            },
+          },
+        },
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
